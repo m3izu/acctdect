@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>mindeset</title>
+</head>
+<body>
+  <h1>Vehicle Crash Detection</h1>
+
+  <div>
+    <button id="useWebcamBtn">Use Webcam</button>
+    <input type="file" id="videoUpload" accept="video/*">
+  </div>
+
+  <video id="video" width="640" height="480" autoplay muted controls></video>
+  <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+  <br>
+  <button id="analyzeBtn">Analyze Frame</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
