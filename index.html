@@ -5,19 +5,16 @@
   <title>mindeset</title>
 </head>
 <body>
-  <h1>crashh detection yawa</h1>
+  <h1>crash detection</h1>
 
-  <div>
-    <button id="useWebcamBtn">Use Webcam</button>
-    <input type="file" id="videoUpload" accept="video/*">
-  </div>
+  <button id="useWebcamBtn">Use Webcam</button>
+  <input type="file" id="videoUpload" accept="video/*">
+  <video id="video" width="640" height="360" controls autoplay muted></video>
+  <canvas id="canvas" width="640" height="360" style="display: none;"></canvas>
 
-  <video id="video" width="640" height="480" autoplay muted controls></video>
-  <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
-  <br>
-  <button id="analyzeBtn">nalyze Frame</button>
+  <div id="statusBox" style="margin-top: 10px; font-weight: bold;"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="app.js"></script>
 </body>
 </html>

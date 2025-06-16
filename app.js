@@ -4,10 +4,11 @@ const ctx = canvas.getContext('2d');
 
 const useWebcamBtn = document.getElementById('useWebcamBtn');
 const videoUpload = document.getElementById('videoUpload');
-const analyzeBtn = document.getElementById('analyzeBtn');
+const statusBox = document.getElementById('statusBox');
 
 let model = null;
 const SCORE_THRESHOLD = 0.9;
+let detectionInterval = null;
 
 async function loadModel() {
   console.log('🔄 Loading model...');
@@ -20,6 +21,7 @@ async function useWebcam() {
   video.srcObject = stream;
   video.play();
   console.log('🎥 Webcam started');
+  startLiveDetection();
 }
 
 videoUpload.addEventListener('change', () => {
@@ -31,18 +33,29 @@ videoUpload.addEventListener('change', () => {
   video.src = fileURL;
   video.play();
   console.log('📼 Playing uploaded video');
+
+  startLiveDetection();
 });
+
+function startLiveDetection() {
+  if (detectionInterval) clearInterval(detectionInterval);
+  
+  detectionInterval = setInterval(() => {
+    if (!video.paused && !video.ended) {
+      analyzeFrame();
+    }
+  }, 500); // analyze every 500ms
+}
 
 async function analyzeFrame() {
   if (!model) {
-    alert('⚠️ Model not loaded!');
+    console.warn('⚠️ Model not loaded!');
     return;
   }
 
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   const imageTensor = tf.browser.fromPixels(canvas).expandDims(0);
 
-  console.log('📦 Running inference...');
   const outputs = await model.executeAsync(imageTensor);
 
   let scores, classes;
@@ -59,18 +72,18 @@ async function analyzeFrame() {
   const topScore = scores[0];
   const topClass = classes[0];
 
-  console.log('🔍 Top Score:', topScore, 'Class:', topClass);
+  console.log('📊 Score:', topScore, 'Class:', topClass);
 
   if (topScore > SCORE_THRESHOLD) {
-    alert(`🚨 Crash detected! Score: ${Math.round(topScore * 100)}%`);
+    statusBox.innerText = `🚨 Crash detected! (${Math.round(topScore * 100)}%)`;
+    statusBox.style.color = 'red';
   } else {
-    alert('✅ No crash detected.');
+    statusBox.innerText = '✅ No crash detected.';
+    statusBox.style.color = 'green';
   }
 }
-
 
 window.onload = async () => {
   await loadModel();
   useWebcamBtn.onclick = useWebcam;
-  analyzeBtn.onclick = analyzeFrame;
 };
